@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SS-AI - Ethical Pentest Assistant</title>
+  <style>
+    body { font-family: monospace; background-color: #121212; color: #00ff00; padding: 20px; }
+    .chat-box { border: 1px solid #00ff00; padding: 15px; height: 400px; overflow-y: scroll; margin-bottom: 10px; }
+    .input-box { width: 100%; display: flex; gap: 10px; }
+    input { flex: 1; padding: 10px; background: #222; color: #00ff00; border: 1px solid #00ff00; }
+    button { padding: 10px 20px; background: #00ff00; color: #000; border: none; cursor: pointer; font-weight: bold; }
+    .footer { margin-top: 20px; font-size: 0.8em; text-align: center; color: #888; }
+  </style>
+</head>
+<body>
+  <h2>[+] SS-AI - Ethical Pentest Assistant</h2>
+  <p>Coded by: <strong>Indrayaza Z</strong> | Status: Active (RoE Enforced)</p>
+  
+  <div class="chat-box" id="chat"></div>
+  
+  <div class="input-box">
+    <input type="text" id="userInput" placeholder="Masukkan perintah pentest atau pertanyaan..." onkeypress="if(event.key === 'Enter') sendMessage()">
+    <button onclick="sendMessage()">Execute</button>
+  </div>
+
+  <div class="footer">
+    SS-AI mematuhi Rules of Engagement. Selalu pastikan Anda memiliki otorisasi penuh sebelum melakukan pengujian.
+  </div>
+
+  <script>
+    const messages = [];
+
+    async function sendMessage() {
+      const input = document.getElementById('userInput');
+      const chat = document.getElementById('chat');
+      const userText = input.value.trim();
+      
+      if (!userText) return;
+
+      chat.innerHTML += `<div><b>User:</b> ${userText}</div>`;
+      input.value = '';
+      messages.push({ role: "user", content: userText });
+
+      try {
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messages })
+        });
+        
+        const data = await response.json();
+        const aiReply = data.reply || '[Error: Tidak dapat terhubung ke server SS-AI]';
+        
+        chat.innerHTML += `<div><b>SS-AI:</b> ${aiReply}</div><br>`;
+        messages.push({ role: "assistant", content: aiReply });
+        chat.scrollTop = chat.scrollHeight;
+      } catch (error) {
+        chat.innerHTML += `<div><b style="color:red;">Error:</b> Terjadi kesalahan sistem.</div><br>`;
+      }
+    }
+  </script>
+</body>
+</html>
