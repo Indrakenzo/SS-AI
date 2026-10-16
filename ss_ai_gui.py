@@ -33,7 +33,6 @@ def send_message(event=None):
     
     selected_model = model_var.get().strip()
     
-    # Menjalankan request di thread terpisah agar GUI tidak freeze
     threading.Thread(target=fetch_ai_response, args=(selected_model,)).start()
 
 def fetch_ai_response(model_name):
@@ -72,33 +71,45 @@ def display_message(msg):
     chat_area.config(state=tk.DISABLED)
     chat_area.yview(tk.END)
 
-# Setup GUI
 root = tk.Tk()
 root.title("SS-AI Ethical Pentest Assistant - Coded by Indrayaza Z")
 root.geometry("750x550")
 root.configure(bg="#1e1e1e")
 
-# --- Bagian Pengaturan (Atas) ---
 settings_frame = tk.Frame(root, bg="#1e1e1e")
 settings_frame.pack(fill=tk.X, padx=10, pady=10)
 
 tk.Label(settings_frame, text="Pilih Model AI :", bg="#1e1e1e", fg="#00ff00", font=("Consolas", 10)).pack(side=tk.LEFT)
 
-# Daftar model gratis populer di OpenRouter
 default_models = [
-    "google/gemini-2.5-flash-free",
-    "meta-llama/llama-3-8b-instruct:free",
-    "mistralai/mistral-7b-instruct:free",
-    "openchat/openchat-7b:free",
-    "gryphe/mythomax-l2-13b:free"
+    "nvidia/nemotron-3.5-lightning:free",
+    "openrouter/free",
+    "poolside/laguna-s-2.1:free",
+    "dots-studio/dots-3-note-preview:free",
+    "nvidia/nemotron-3-super-120b-a12b:free",
+    "apodex/apodex-1.1-mini:free",
+    "thinkingmachines/inkling:free",
+    "cohere/north-mini-code:free",
+    "thinkingmachines/inkling-small:free",
+    "poolside/laguna-xs-2.1:free",
+    "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+    "inception/mercury-decide:free",
+    "liquid/lfm-2.5-2.6b:free",
+    "nvidia/llama-nemotron-rerank-vl-1b-v2:free",
+    "nvidia/nemotron-3.5-content-safety:free",
+    "nvidia/nemotron-3-embed-1b:free",
+    "google/gemma-4-26b-a4b-it:free",
+    "nvidia/llama-nemotron-embed-vl-1b-v2:free",
+    "google/gemma-4-31b-it:free",
+    "respan/span-01-lite:free",
+    "liquid/lfm-2.5-embedding-350m:free",
+    "fish-audio/s2.1-pro-free:free"
 ]
 
 model_var = tk.StringVar(value=default_models[0])
-# Gunakan ttk.Combobox agar pengguna bisa memilih atau mengetik manual jika model tidak ada di list
 model_dropdown = ttk.Combobox(settings_frame, textvariable=model_var, values=default_models, width=45)
 model_dropdown.pack(side=tk.LEFT, padx=10)
 
-# --- Chat Area (Tengah) ---
 chat_area = scrolledtext.ScrolledText(root, wrap=tk.WORD, bg="#2d2d2d", fg="#00ff00", font=("Consolas", 10))
 chat_area.pack(padx=10, pady=(0, 10), fill=tk.BOTH, expand=True)
 chat_area.insert(tk.END, "=== SS-AI: Ethical Pentest Assistant (RoE Enforced) ===\n")
@@ -106,7 +117,6 @@ chat_area.insert(tk.END, "=== Coded by: Indrayaza Z ===\n")
 chat_area.insert(tk.END, "Catatan: Anda dapat mengganti/mengetik nama model OpenRouter di kotak dropdown atas.\n\n")
 chat_area.config(state=tk.DISABLED)
 
-# --- Input Area (Bawah) ---
 input_frame = tk.Frame(root, bg="#1e1e1e")
 input_frame.pack(fill=tk.X, padx=10, pady=(0, 10))
 
