@@ -3,7 +3,7 @@ import requests
 import json
 import threading
 import tkinter as tk
-from tkinter import scrolledtext, messagebox
+from tkinter import scrolledtext, ttk
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -31,10 +31,12 @@ def send_message(event=None):
     entry_field.delete(0, tk.END)
     messages.append({"role": "user", "content": user_text})
     
-    # Menjalankan request di thread terpisah agar GUI tidak freeze (lag)
-    threading.Thread(target=fetch_ai_response).start()
+    selected_model = model_var.get().strip()
+    
+    # Menjalankan request di thread terpisah agar GUI tidak freeze
+    threading.Thread(target=fetch_ai_response, args=(selected_model,)).start()
 
-def fetch_ai_response():
+def fetch_ai_response(model_name):
     if not API_KEY:
         display_message("Error: OPENROUTER_API_KEY tidak ditemukan di file .env")
         return
@@ -47,7 +49,7 @@ def fetch_ai_response():
     }
     
     payload = {
-        "model": "google/gemini-2.5-flash-free",
+        "model": model_name,
         "messages": messages
     }
     
@@ -58,9 +60,9 @@ def fetch_ai_response():
         if response.status_code == 200:
             ai_reply = response_data['choices'][0]['message']['content']
             messages.append({"role": "assistant", "content": ai_reply})
-            display_message(f"SS-AI: {ai_reply}")
+            display_message(f"SS-AI ({model_name}):\n{ai_reply}")
         else:
-            display_message(f"API Error: Gagal mendapatkan respons dari server.")
+            display_message(f"API Error: {response_data}")
     except Exception as e:
         display_message(f"Error: {str(e)}")
 
@@ -73,17 +75,38 @@ def display_message(msg):
 # Setup GUI
 root = tk.Tk()
 root.title("SS-AI Ethical Pentest Assistant - Coded by Indrayaza Z")
-root.geometry("700x500")
+root.geometry("750x550")
 root.configure(bg="#1e1e1e")
 
-# Chat Area
+# --- Bagian Pengaturan (Atas) ---
+settings_frame = tk.Frame(root, bg="#1e1e1e")
+settings_frame.pack(fill=tk.X, padx=10, pady=10)
+
+tk.Label(settings_frame, text="Pilih Model AI :", bg="#1e1e1e", fg="#00ff00", font=("Consolas", 10)).pack(side=tk.LEFT)
+
+# Daftar model gratis populer di OpenRouter
+default_models = [
+    "google/gemini-2.5-flash-free",
+    "meta-llama/llama-3-8b-instruct:free",
+    "mistralai/mistral-7b-instruct:free",
+    "openchat/openchat-7b:free",
+    "gryphe/mythomax-l2-13b:free"
+]
+
+model_var = tk.StringVar(value=default_models[0])
+# Gunakan ttk.Combobox agar pengguna bisa memilih atau mengetik manual jika model tidak ada di list
+model_dropdown = ttk.Combobox(settings_frame, textvariable=model_var, values=default_models, width=45)
+model_dropdown.pack(side=tk.LEFT, padx=10)
+
+# --- Chat Area (Tengah) ---
 chat_area = scrolledtext.ScrolledText(root, wrap=tk.WORD, bg="#2d2d2d", fg="#00ff00", font=("Consolas", 10))
-chat_area.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
+chat_area.pack(padx=10, pady=(0, 10), fill=tk.BOTH, expand=True)
 chat_area.insert(tk.END, "=== SS-AI: Ethical Pentest Assistant (RoE Enforced) ===\n")
-chat_area.insert(tk.END, "=== Coded by: Indrayaza Z ===\n\n")
+chat_area.insert(tk.END, "=== Coded by: Indrayaza Z ===\n")
+chat_area.insert(tk.END, "Catatan: Anda dapat mengganti/mengetik nama model OpenRouter di kotak dropdown atas.\n\n")
 chat_area.config(state=tk.DISABLED)
 
-# Input Area
+# --- Input Area (Bawah) ---
 input_frame = tk.Frame(root, bg="#1e1e1e")
 input_frame.pack(fill=tk.X, padx=10, pady=(0, 10))
 
