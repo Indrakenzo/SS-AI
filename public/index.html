@@ -9,6 +9,7 @@
     .chat-box { border: 1px solid #00ff00; padding: 15px; height: 400px; overflow-y: scroll; margin-bottom: 10px; }
     .input-box { width: 100%; display: flex; gap: 10px; }
     input { flex: 1; padding: 10px; background: #222; color: #00ff00; border: 1px solid #00ff00; }
+    select { background: #222; color: #00ff00; border: 1px solid #00ff00; padding: 5px; margin-bottom: 10px; width: 100%; }
     button { padding: 10px 20px; background: #00ff00; color: #000; border: none; cursor: pointer; font-weight: bold; }
     .footer { margin-top: 20px; font-size: 0.8em; text-align: center; color: #888; }
   </style>
@@ -17,6 +18,31 @@
   <h2>[+] SS-AI - Ethical Pentest Assistant</h2>
   <p>Coded by: <strong>Indrayaza Z</strong> | Status: Active (RoE Enforced)</p>
   
+  <select id="modelSelect">
+    <option value="nvidia/nemotron-3.5-lightning:free">nvidia/nemotron-3.5-lightning:free</option>
+    <option value="openrouter/free">openrouter/free</option>
+    <option value="poolside/laguna-s-2.1:free">poolside/laguna-s-2.1:free</option>
+    <option value="dots-studio/dots-3-note-preview:free">dots-studio/dots-3-note-preview:free</option>
+    <option value="nvidia/nemotron-3-super-120b-a12b:free">nvidia/nemotron-3-super-120b-a12b:free</option>
+    <option value="apodex/apodex-1.1-mini:free">apodex/apodex-1.1-mini:free</option>
+    <option value="thinkingmachines/inkling:free">thinkingmachines/inkling:free</option>
+    <option value="cohere/north-mini-code:free">cohere/north-mini-code:free</option>
+    <option value="thinkingmachines/inkling-small:free">thinkingmachines/inkling-small:free</option>
+    <option value="poolside/laguna-xs-2.1:free">poolside/laguna-xs-2.1:free</option>
+    <option value="nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free">nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free</option>
+    <option value="inception/mercury-decide:free">inception/mercury-decide:free</option>
+    <option value="liquid/lfm-2.5-2.6b:free">liquid/lfm-2.5-2.6b:free</option>
+    <option value="nvidia/llama-nemotron-rerank-vl-1b-v2:free">nvidia/llama-nemotron-rerank-vl-1b-v2:free</option>
+    <option value="nvidia/nemotron-3.5-content-safety:free">nvidia/nemotron-3.5-content-safety:free</option>
+    <option value="nvidia/nemotron-3-embed-1b:free">nvidia/nemotron-3-embed-1b:free</option>
+    <option value="google/gemma-4-26b-a4b-it:free">google/gemma-4-26b-a4b-it:free</option>
+    <option value="nvidia/llama-nemotron-embed-vl-1b-v2:free">nvidia/llama-nemotron-embed-vl-1b-v2:free</option>
+    <option value="google/gemma-4-31b-it:free">google/gemma-4-31b-it:free</option>
+    <option value="respan/span-01-lite:free">respan/span-01-lite:free</option>
+    <option value="liquid/lfm-2.5-embedding-350m:free">liquid/lfm-2.5-embedding-350m:free</option>
+    <option value="fish-audio/s2.1-pro-free:free">fish-audio/s2.1-pro-free:free</option>
+  </select>
+
   <div class="chat-box" id="chat"></div>
   
   <div class="input-box">
@@ -34,6 +60,7 @@
     async function sendMessage() {
       const input = document.getElementById('userInput');
       const chat = document.getElementById('chat');
+      const model = document.getElementById('modelSelect').value;
       const userText = input.value.trim();
       
       if (!userText) return;
@@ -46,13 +73,13 @@
         const response = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ messages })
+          body: JSON.stringify({ messages, model })
         });
         
         const data = await response.json();
         const aiReply = data.reply || '[Error: Tidak dapat terhubung ke server SS-AI]';
         
-        chat.innerHTML += `<div><b>SS-AI:</b> ${aiReply}</div><br>`;
+        chat.innerHTML += `<div><b>SS-AI (${model}):</b> ${aiReply}</div><br>`;
         messages.push({ role: "assistant", content: aiReply });
         chat.scrollTop = chat.scrollHeight;
       } catch (error) {
