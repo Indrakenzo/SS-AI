@@ -1,0 +1,12 @@
+{
+  "name": "ss-ai",
+  "version": "1.0.0",
+  "description": "AI-Pentest Assistant sesuai RoE (Rules of Engagement) - by Indrayaza Z",
+  "main": "api/chat.js",
+  "scripts": {
+    "start": "node api/chat.js"
+  },
+  "author": "Indrayaza Z",
+  "license": "Custom",
+  "dependencies": {}
+}
