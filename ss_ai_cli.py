@@ -3,7 +3,6 @@ import requests
 import json
 from dotenv import load_dotenv
 
-# Load konfigurasi dari file .env
 load_dotenv()
 
 API_KEY = os.getenv("OPENROUTER_API_KEY")
@@ -13,8 +12,7 @@ if not API_KEY:
     print("[-] Error: OPENROUTER_API_KEY tidak ditemukan di file .env")
     exit(1)
 
-# Default model
-current_model = "google/gemini-2.5-flash-free"
+current_model = "nvidia/nemotron-3.5-lightning:free"
 
 system_prompt = {
     "role": "system",
@@ -40,23 +38,39 @@ print("="*55)
 while True:
     user_input = input("\n[User] > ")
     
-    # Deteksi perintah keluar
     if user_input.lower() in ['exit', 'quit']:
         print("[*] Exiting SS-AI...")
         break
         
-    # Deteksi perintah ganti model
     if user_input.lower().startswith('/model'):
         parts = user_input.split()
         if len(parts) > 1:
             current_model = parts[1]
             print(f"[+] Model berhasil diubah menjadi: {current_model}")
         else:
-            print("[!] Daftar model gratis OpenRouter yang direkomendasikan:")
-            print("    - google/gemini-2.5-flash-free")
-            print("    - meta-llama/llama-3-8b-instruct:free")
-            print("    - mistralai/mistral-7b-instruct:free")
-            print("    - gryphe/mythomax-l2-13b:free")
+            print("[!] Daftar model gratis OpenRouter yang tersedia:")
+            print("    - nvidia/nemotron-3.5-lightning:free")
+            print("    - openrouter/free")
+            print("    - poolside/laguna-s-2.1:free")
+            print("    - dots-studio/dots-3-note-preview:free")
+            print("    - nvidia/nemotron-3-super-120b-a12b:free")
+            print("    - apodex/apodex-1.1-mini:free")
+            print("    - thinkingmachines/inkling:free")
+            print("    - cohere/north-mini-code:free")
+            print("    - thinkingmachines/inkling-small:free")
+            print("    - poolside/laguna-xs-2.1:free")
+            print("    - nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free")
+            print("    - inception/mercury-decide:free")
+            print("    - liquid/lfm-2.5-2.6b:free")
+            print("    - nvidia/llama-nemotron-rerank-vl-1b-v2:free")
+            print("    - nvidia/nemotron-3.5-content-safety:free")
+            print("    - nvidia/nemotron-3-embed-1b:free")
+            print("    - google/gemma-4-26b-a4b-it:free")
+            print("    - nvidia/llama-nemotron-embed-vl-1b-v2:free")
+            print("    - google/gemma-4-31b-it:free")
+            print("    - respan/span-01-lite:free")
+            print("    - liquid/lfm-2.5-embedding-350m:free")
+            print("    - fish-audio/s2.1-pro-free:free")
             print("    Cara pakai: /model <nama_model>")
         continue
 
