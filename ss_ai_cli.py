@@ -13,7 +13,9 @@ if not API_KEY:
     print("[-] Error: OPENROUTER_API_KEY tidak ditemukan di file .env")
     exit(1)
 
-# System prompt untuk Rules of Engagement (RoE)
+# Default model
+current_model = "google/gemini-2.5-flash-free"
+
 system_prompt = {
     "role": "system",
     "content": "Anda adalah SS-AI, Asisten Penetration Testing yang dikembangkan oleh Indrayaza Z. "
@@ -26,17 +28,38 @@ system_prompt = {
 
 messages = [system_prompt]
 
-print("="*50)
+print("="*55)
 print("  SS-AI: Ethical Pentest Assistant (CLI Mode)")
 print("  Coded by: Indrayaza Z")
-print("  Ketik 'exit' atau 'quit' untuk keluar.")
-print("="*50)
+print("="*55)
+print(f"  [*] Model aktif : {current_model}")
+print("  [*] Ketik '/model <nama_model>' untuk ganti model.")
+print("  [*] Ketik 'exit' atau 'quit' untuk keluar.")
+print("="*55)
 
 while True:
     user_input = input("\n[User] > ")
+    
+    # Deteksi perintah keluar
     if user_input.lower() in ['exit', 'quit']:
         print("[*] Exiting SS-AI...")
         break
+        
+    # Deteksi perintah ganti model
+    if user_input.lower().startswith('/model'):
+        parts = user_input.split()
+        if len(parts) > 1:
+            current_model = parts[1]
+            print(f"[+] Model berhasil diubah menjadi: {current_model}")
+        else:
+            print("[!] Daftar model gratis OpenRouter yang direkomendasikan:")
+            print("    - google/gemini-2.5-flash-free")
+            print("    - meta-llama/llama-3-8b-instruct:free")
+            print("    - mistralai/mistral-7b-instruct:free")
+            print("    - gryphe/mythomax-l2-13b:free")
+            print("    Cara pakai: /model <nama_model>")
+        continue
+
     if not user_input.strip():
         continue
 
@@ -50,12 +73,12 @@ while True:
     }
 
     payload = {
-        "model": "google/gemini-2.5-flash-free",
+        "model": current_model,
         "messages": messages
     }
 
     try:
-        print("[*] SS-AI sedang memproses...")
+        print(f"[*] SS-AI ({current_model}) sedang memproses...")
         response = requests.post(API_URL, headers=headers, data=json.dumps(payload))
         response_data = response.json()
         
