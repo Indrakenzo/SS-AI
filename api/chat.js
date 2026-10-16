@@ -3,14 +3,13 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { messages } = req.body;
+  const { messages, model } = req.body;
   const apiKey = process.env.OPENROUTER_API_KEY;
 
   if (!apiKey) {
     return res.status(500).json({ error: 'API key is missing' });
   }
 
-  // System prompt untuk memastikan AI mematuhi Rules of Engagement (RoE)
   const systemPrompt = {
     role: 'system',
     content: `Anda adalah SS-AI, Asisten Penetration Testing yang dikembangkan oleh Indrayaza Z. 
@@ -22,6 +21,7 @@ export default async function handler(req, res) {
   };
 
   const formattedMessages = [systemPrompt, ...messages];
+  const selectedModel = model || 'nvidia/nemotron-3.5-lightning:free'; // Fallback model
 
   try {
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -33,7 +33,7 @@ export default async function handler(req, res) {
         'X-Title': 'SS-AI Pentest Assistant'
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash-free', // Model gratis yang tersedia di OpenRouter
+        model: selectedModel,
         messages: formattedMessages,
       }),
     });
